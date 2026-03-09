@@ -1,0 +1,265 @@
+@import "tailwindcss";
+
+/* ── Color Palette ─────────────────────────────── */
+:root {
+  --deep-navy: #060b14;
+  --mid-navy: #0c1525;
+  --gold: #c9a84c;
+  --gold-soft: rgba(201, 168, 76, 0.15);
+  --gold-glow: rgba(201, 168, 76, 0.08);
+  --cream: #e8e0d0;
+  --white-soft: rgba(255, 255, 255, 0.85);
+  --white-muted: rgba(255, 255, 255, 0.45);
+  --error: #c45c3e;
+}
+
+/* ── Base Reset ────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--deep-navy);
+  color: var(--cream);
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Film Grain Overlay ────────────────────────── */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Typography Classes ────────────────────────── */
+.font-display {
+  font-family: "Cormorant Garamond", serif;
+}
+
+.font-body {
+  font-family: "Outfit", sans-serif;
+}
+
+/* ── Animation Keyframes ───────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes fadeInUpBrand {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandDivider {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes ambientPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Reusable Animation Classes ────────────────── */
+.animate-fade-in-up {
+  animation: fadeInUp 1.2s ease forwards;
+}
+
+.animate-fade-out-up {
+  animation: fadeOutUp 1s ease forwards;
+}
+
+.animate-fade-in-brand {
+  animation: fadeInUpBrand 1.2s ease forwards;
+}
+
+.animate-expand-divider {
+  animation: expandDivider 1.5s ease forwards;
+}
+
+.animate-ambient-pulse {
+  animation: ambientPulse 8s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+
+/* ── Gold Divider ──────────────────────────────── */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold),
+    transparent
+  );
+  width: 0;
+}
+
+.gold-divider.animate {
+  animation: expandDivider 1.5s ease forwards;
+}
+
+/* ── Input Styles ──────────────────────────────── */
+.input-gold {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--cream);
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+}
+
+.input-gold::placeholder {
+  color: var(--white-muted);
+}
+
+.input-gold:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+}
+
+.input-gold.error {
+  border-color: var(--error);
+}
+
+/* ── Select Dropdown ───────────────────────────── */
+.select-gold {
+  background: var(--deep-navy);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--cream);
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.select-gold:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+}
+
+.select-gold option {
+  background: var(--deep-navy);
+  color: var(--cream);
+}
+
+/* ── Textarea ──────────────────────────────────── */
+.textarea-gold {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--cream);
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea-gold::placeholder {
+  color: var(--white-muted);
+}
+
+.textarea-gold:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+}
+
+.textarea-gold.error {
+  border-color: var(--error);
+}
+
+/* ── Noscript Fallback ─────────────────────────── */
+noscript .fallback-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 2rem;
+}
