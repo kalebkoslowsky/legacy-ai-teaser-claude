@@ -129,7 +129,7 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
         >
           <span>
             {displayedText}
-            {phase === "typing" && <span className="typewriter-cursor" />}
+            {phase !== "dark" && <span className="typewriter-cursor" />}
           </span>
         </p>
       )}
@@ -141,7 +141,7 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
           bottom: "2rem",
           right: "2rem",
           fontSize: "0.75rem",
-          letterSpacing: "0.15em",
+          letterSpacing: "0.08em",
           textTransform: "uppercase",
           color: "var(--white-muted)",
           background: "none",

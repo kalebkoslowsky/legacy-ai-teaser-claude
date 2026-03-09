@@ -64,7 +64,7 @@ export default function Home() {
             className="font-body"
             style={{
               fontSize: "0.7rem",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: "var(--white-muted)",
             }}

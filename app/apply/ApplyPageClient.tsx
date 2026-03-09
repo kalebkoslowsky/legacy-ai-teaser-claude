@@ -55,18 +55,13 @@ export default function ApplyPageClient() {
               className="font-display"
               style={{
                 fontSize: "clamp(1.2rem, 3vw, 1.8rem)",
-                letterSpacing: "0.1em",
+                letterSpacing: "0.06em",
                 fontWeight: 400,
                 color: "var(--cream)",
               }}
             >
               Application Received
             </h1>
-
-            <div
-              className="gold-divider animate mx-auto"
-              style={{ maxWidth: "60px", marginTop: "1.5rem" }}
-            />
 
             <p
               className="font-body"
@@ -107,20 +102,15 @@ export default function ApplyPageClient() {
                 className="font-display"
                 style={{
                   fontSize: "clamp(0.6rem, 1.6vw, 0.9rem)",
-                  letterSpacing: "0.2em",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   fontWeight: 600,
                 }}
               >
                 <span style={{ color: "var(--cream)" }}>LEGACY </span>
-                <span style={{ color: "var(--gold)" }}>AI</span>
+                <span className="glow-gold" style={{ color: "var(--gold)" }}>AI</span>
                 <span style={{ color: "var(--cream)" }}> TECHNOLOGIES</span>
               </h1>
-
-              <div
-                className="gold-divider animate mx-auto mt-6"
-                style={{ maxWidth: "60px" }}
-              />
 
               <h2
                 className="font-display mt-6"
@@ -163,7 +153,7 @@ export default function ApplyPageClient() {
                 className="font-body"
                 style={{
                   fontSize: "0.7rem",
-                  letterSpacing: "0.2em",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: "var(--white-muted)",
                 }}

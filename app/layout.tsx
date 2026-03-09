@@ -43,7 +43,7 @@ export default function RootLayout({
               style={{
                 fontFamily: "Share Tech Mono, monospace",
                 fontSize: "3rem",
-                letterSpacing: "0.15em",
+                letterSpacing: "0.06em",
                 textTransform: "uppercase",
               }}
             >
@@ -57,7 +57,7 @@ export default function RootLayout({
                 fontSize: "0.9rem",
                 color: "rgba(255,255,255,0.85)",
                 marginTop: "1.5rem",
-                letterSpacing: "0.3em",
+                letterSpacing: "0.1em",
                 textTransform: "uppercase",
               }}
             >

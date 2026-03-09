@@ -43,7 +43,7 @@ export default function EmailCapture() {
           className="font-body"
           style={{
             fontSize: "0.9rem",
-            letterSpacing: "0.15em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--gold)",
           }}
@@ -60,9 +60,9 @@ export default function EmailCapture() {
         className="font-body"
         style={{
           fontSize: "0.85rem",
-          letterSpacing: "0.15em",
+          letterSpacing: "0.08em",
           textTransform: "uppercase",
-          fontWeight: 300,
+          fontWeight: 400,
           color: "var(--white-soft)",
         }}
       >

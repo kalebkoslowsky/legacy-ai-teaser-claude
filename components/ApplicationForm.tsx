@@ -99,7 +99,7 @@ function Section({
         className="font-display"
         style={{
           fontSize: "0.72rem",
-          letterSpacing: "0.2em",
+          letterSpacing: "0.1em",
           textTransform: "uppercase",
           fontWeight: 400,
           color: "var(--gold)",
@@ -385,7 +385,7 @@ export default function ApplicationForm({ onSuccess }: ApplicationFormProps) {
           className="font-body w-full cursor-pointer"
           style={{
             fontSize: "0.82rem",
-            letterSpacing: "0.12em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             fontWeight: 400,
             backgroundColor: "var(--gold)",

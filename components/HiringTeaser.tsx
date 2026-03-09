@@ -5,12 +5,6 @@ import Link from "next/link";
 export default function HiringTeaser() {
   return (
     <section className="flex flex-col items-center gap-6 text-center px-6">
-      {/* Divider */}
-      <div
-        className="gold-divider animate"
-        style={{ maxWidth: "80px", margin: "0 auto" }}
-      />
-
       {/* Heading */}
       <h2
         className="font-display"
@@ -46,7 +40,7 @@ export default function HiringTeaser() {
         className="font-body inline-block"
         style={{
           fontSize: "0.85rem",
-          letterSpacing: "0.15em",
+          letterSpacing: "0.08em",
           textTransform: "uppercase",
           fontWeight: 300,
           color: "var(--cream)",

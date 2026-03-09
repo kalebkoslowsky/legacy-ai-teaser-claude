@@ -16,7 +16,6 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
   const [brandText, setBrandText] = useState("");
   const [taglineText, setTaglineText] = useState("");
   const [stage, setStage] = useState<"divider" | "brand" | "tagline" | "done">("divider");
-  const [showDivider2, setShowDivider2] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
                 timerRef.current = setTimeout(typeTagline, CHAR_DELAY_TAGLINE);
               } else {
                 // Tagline done — show divider and reveal everything at once
-                setShowDivider2(true);
                 setStage("done");
                 onRevealComplete();
               }
@@ -74,7 +72,7 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
     return (
       <>
         <span style={{ color: "var(--cream)" }}>{legacyPart}</span>
-        <span style={{ color: "var(--gold)" }}>{aiPart}</span>
+        <span className="glow-gold" style={{ color: "var(--gold)" }}>{aiPart}</span>
         <span style={{ color: "var(--cream)" }}>{techPart}</span>
         {stage === "brand" && <span className="typewriter-cursor" />}
       </>
@@ -83,18 +81,12 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
 
   return (
     <div className="flex flex-col items-center gap-6" style={{ zIndex: 10 }}>
-      {/* Top divider */}
-      <div
-        className="gold-divider animate"
-        style={{ maxWidth: "120px", margin: "0 auto" }}
-      />
-
       {/* Brand name */}
       <h1
         className="font-display text-center"
         style={{
           fontSize: "clamp(1.4rem, 5vw, 3.2rem)",
-          letterSpacing: "0.12em",
+          letterSpacing: "0.06em",
           textTransform: "uppercase",
           fontWeight: 600,
           minHeight: "1.4em",
@@ -109,7 +101,7 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
         className="font-body"
         style={{
           fontSize: "clamp(0.8rem, 1.6vw, 1rem)",
-          letterSpacing: "0.3em",
+          letterSpacing: "0.1em",
           textTransform: "uppercase",
           fontWeight: 200,
           color: "var(--white-soft)",
@@ -121,16 +113,6 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
         {stage === "tagline" && <span className="typewriter-cursor" />}
       </p>
 
-      {/* Bottom divider */}
-      {showDivider2 && (
-        <div
-          className="gold-divider animate"
-          style={{
-            maxWidth: "80px",
-            margin: "0.5rem auto 0",
-          }}
-        />
-      )}
     </div>
   );
 }
