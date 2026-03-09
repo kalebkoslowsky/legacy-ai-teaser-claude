@@ -129,7 +129,7 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
         >
           <span>
             {displayedText}
-            {phase !== "dark" && <span className="typewriter-cursor" />}
+            <span className="typewriter-cursor" />
           </span>
         </p>
       )}
