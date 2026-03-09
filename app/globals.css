@@ -51,7 +51,7 @@ body::after {
 
 /* ── Typography Classes ────────────────────────── */
 .font-display {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Orbitron", sans-serif;
 }
 
 .font-body {
@@ -149,6 +149,37 @@ body::after {
   animation: fadeIn 1s ease forwards;
 }
 
+/* ── Typewriter Cursor ─────────────────────────── */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: var(--gold);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.8s ease-in-out infinite;
+}
+
+@keyframes fadeOutSlow {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-fade-out-slow {
+  animation: fadeOutSlow 2s ease forwards;
+}
+
 /* ── Gold Divider ──────────────────────────────── */
 .gold-divider {
   height: 1px;
@@ -218,6 +249,10 @@ body::after {
   box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
 }
 
+.select-gold.error {
+  border-color: var(--error);
+}
+
 .select-gold option {
   background: var(--deep-navy);
   color: var(--cream);
@@ -251,6 +286,34 @@ body::after {
 
 .textarea-gold.error {
   border-color: var(--error);
+}
+
+/* ── Form Card ─────────────────────────────────── */
+.form-card {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 21, 37, 0.6) 0%,
+    rgba(6, 11, 20, 0.8) 100%
+  );
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.form-section {
+  border-left: 2px solid rgba(201, 168, 76, 0.2);
+  padding-left: 1.5rem;
+}
+
+/* ── Input Size Upgrade ────────────────────────── */
+.input-lg {
+  padding: 0.9rem 1.15rem;
+  font-size: 0.95rem;
+}
+
+.textarea-lg {
+  padding: 0.9rem 1.15rem;
+  font-size: 0.95rem;
 }
 
 /* ── Noscript Fallback ─────────────────────────── */

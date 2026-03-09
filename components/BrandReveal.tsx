@@ -1,27 +1,85 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+const BRAND_TEXT = "LEGACY AI TECHNOLOGIES";
+const TAGLINE_TEXT = "The future of trusted intelligence";
+const CHAR_DELAY_BRAND = 65;
+const CHAR_DELAY_TAGLINE = 30;
+const PAUSE_BEFORE_TAGLINE = 700;
 
 interface BrandRevealProps {
   onRevealComplete: () => void;
 }
 
 export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
-  const [stage, setStage] = useState(0);
-  // 0: divider, 1: brand name, 2: tagline, 3: done
+  const [brandText, setBrandText] = useState("");
+  const [taglineText, setTaglineText] = useState("");
+  const [stage, setStage] = useState<"divider" | "brand" | "tagline" | "done">("divider");
+  const [showDivider2, setShowDivider2] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setStage(1), 200),    // Start brand name
-      setTimeout(() => setStage(2), 1600),   // Tagline after brand
-      setTimeout(() => {
-        setStage(3);
-        onRevealComplete();
-      }, 2800),
-    ];
+    let charIndex = 0;
 
-    return () => timers.forEach(clearTimeout);
+    timerRef.current = setTimeout(() => {
+      setStage("brand");
+
+      const typeBrand = () => {
+        charIndex++;
+        setBrandText(BRAND_TEXT.slice(0, charIndex));
+
+        if (charIndex < BRAND_TEXT.length) {
+          timerRef.current = setTimeout(typeBrand, CHAR_DELAY_BRAND);
+        } else {
+          timerRef.current = setTimeout(() => {
+            setStage("tagline");
+            charIndex = 0;
+
+            const typeTagline = () => {
+              charIndex++;
+              setTaglineText(TAGLINE_TEXT.slice(0, charIndex));
+
+              if (charIndex < TAGLINE_TEXT.length) {
+                timerRef.current = setTimeout(typeTagline, CHAR_DELAY_TAGLINE);
+              } else {
+                // Tagline done — show divider and reveal everything at once
+                setShowDivider2(true);
+                setStage("done");
+                onRevealComplete();
+              }
+            };
+
+            typeTagline();
+          }, PAUSE_BEFORE_TAGLINE);
+        }
+      };
+
+      typeBrand();
+    }, 800);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [onRevealComplete]);
+
+  // "LEGACY AI TECHNOLOGIES"
+  // "LEGACY " = 0-6, "AI" = 7-8, " TECHNOLOGIES" = 9-22
+  const renderBrand = () => {
+    const text = brandText;
+    const legacyPart = text.slice(0, Math.min(text.length, 7)); // "LEGACY "
+    const aiPart = text.length > 7 ? text.slice(7, Math.min(text.length, 9)) : ""; // "AI"
+    const techPart = text.length > 9 ? text.slice(9) : ""; // " TECHNOLOGIES"
+
+    return (
+      <>
+        <span style={{ color: "var(--cream)" }}>{legacyPart}</span>
+        <span style={{ color: "var(--gold)" }}>{aiPart}</span>
+        <span style={{ color: "var(--cream)" }}>{techPart}</span>
+        {stage === "brand" && <span className="typewriter-cursor" />}
+      </>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center gap-6" style={{ zIndex: 10 }}>
@@ -33,48 +91,46 @@ export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
 
       {/* Brand name */}
       <h1
-        className="font-display"
+        className="font-display text-center"
         style={{
-          fontSize: "clamp(2.5rem, 7vw, 5rem)",
-          letterSpacing: "0.15em",
+          fontSize: "clamp(1.4rem, 5vw, 3.2rem)",
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
-          fontWeight: 400,
-          opacity: stage >= 1 ? 1 : 0,
-          transform: stage >= 1 ? "translateY(0)" : "translateY(15px)",
-          transition: "opacity 1.2s ease, transform 1.2s ease",
+          fontWeight: 600,
+          minHeight: "1.4em",
+          visibility: stage === "divider" ? "hidden" : "visible",
         }}
       >
-        <span style={{ color: "var(--cream)" }}>LEGACY </span>
-        <span style={{ color: "var(--gold)" }}>AI</span>
+        {renderBrand()}
       </h1>
 
       {/* Tagline */}
       <p
         className="font-body"
         style={{
-          fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
+          fontSize: "clamp(0.8rem, 1.6vw, 1rem)",
           letterSpacing: "0.3em",
           textTransform: "uppercase",
           fontWeight: 200,
           color: "var(--white-soft)",
-          opacity: stage >= 2 ? 1 : 0,
-          transform: stage >= 2 ? "translateY(0)" : "translateY(10px)",
-          transition: "opacity 1.2s ease, transform 1.2s ease",
+          minHeight: "1.5em",
+          visibility: stage === "divider" || stage === "brand" ? "hidden" : "visible",
         }}
       >
-        The future of trusted intelligence
+        {taglineText}
+        {stage === "tagline" && <span className="typewriter-cursor" />}
       </p>
 
       {/* Bottom divider */}
-      <div
-        className="gold-divider"
-        style={{
-          maxWidth: "80px",
-          margin: "0.5rem auto 0",
-          animation: stage >= 2 ? "expandDivider 1.5s ease forwards" : "none",
-          width: stage >= 2 ? undefined : "0",
-        }}
-      />
+      {showDivider2 && (
+        <div
+          className="gold-divider animate"
+          style={{
+            maxWidth: "80px",
+            margin: "0.5rem auto 0",
+          }}
+        />
+      )}
     </div>
   );
 }

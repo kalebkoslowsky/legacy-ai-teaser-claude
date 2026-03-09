@@ -9,22 +9,20 @@ import EmailCapture from "@/components/EmailCapture";
 import HiringTeaser from "@/components/HiringTeaser";
 
 export default function Home() {
-  const [phase, setPhase] = useState<
-    "questions" | "reveal" | "email" | "complete"
-  >("questions");
+  const [phase, setPhase] = useState<"questions" | "reveal" | "complete">(
+    "questions"
+  );
 
   const handleQuestionsComplete = useCallback(() => {
     setPhase("reveal");
   }, []);
 
   const handleRevealComplete = useCallback(() => {
-    setPhase("email");
-    // Stagger the hiring section
-    setTimeout(() => setPhase("complete"), 600);
+    setPhase("complete");
   }, []);
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <main className="relative min-h-screen flex flex-col overflow-hidden">
       <AmbientGlow />
       <ParticleBackground />
 
@@ -36,42 +34,31 @@ export default function Home() {
       {/* Main reveal content */}
       {phase !== "questions" && (
         <div
-          className="relative flex flex-col items-center gap-12 px-6 py-20"
+          className="relative flex-1 flex flex-col items-center justify-center px-6 py-20"
           style={{ zIndex: 10 }}
         >
-          <BrandReveal onRevealComplete={handleRevealComplete} />
+          <div className="flex flex-col items-center gap-12">
+            <BrandReveal onRevealComplete={handleRevealComplete} />
 
-          {/* Email capture */}
-          {(phase === "email" || phase === "complete") && (
-            <div
-              className="animate-fade-in"
-              style={{ animationDelay: "0.2s", animationFillMode: "both" }}
-            >
-              <EmailCapture />
-            </div>
-          )}
+            {/* Everything after tagline loads at once */}
+            {phase === "complete" && (
+              <div className="flex flex-col items-center gap-12 animate-fade-in">
+                <EmailCapture />
 
-          {/* Hiring section */}
-          {phase === "complete" && (
-            <div
-              className="mt-16 animate-fade-in"
-              style={{ animationDelay: "0.4s", animationFillMode: "both" }}
-            >
-              <HiringTeaser />
-            </div>
-          )}
+                <div className="mt-16">
+                  <HiringTeaser />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Footer */}
       {phase === "complete" && (
         <footer
-          className="absolute bottom-0 w-full text-center py-6 animate-fade-in"
-          style={{
-            zIndex: 10,
-            animationDelay: "0.8s",
-            animationFillMode: "both",
-          }}
+          className="relative w-full text-center py-8 animate-fade-in"
+          style={{ zIndex: 10 }}
         >
           <p
             className="font-body"

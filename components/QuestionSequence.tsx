@@ -1,17 +1,43 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
-const QUESTIONS = [
-  "What if your AI isn't telling you the truth?",
-  "What if transparency wasn't optional?",
-  "What if intelligence was built to serve — not survive?",
+interface Beat {
+  text: string;
+  hold: number;      // ms to hold after typing
+  pauseAfter: number; // ms of dark pause before next beat
+  italic: boolean;
+}
+
+const BEATS: Beat[] = [
+  {
+    text: "What if the most powerful technology in history was built with the wrong priorities?",
+    hold: 3000,
+    pauseAfter: 800,
+    italic: false,
+  },
+  {
+    text: "What if intelligence was built to serve — not survive?",
+    hold: 3000,
+    pauseAfter: 800,
+    italic: false,
+  },
+  {
+    text: "Safety shouldn't be an afterthought.",
+    hold: 2500,
+    pauseAfter: 1000, // longer dark pause before the answer
+    italic: false,
+  },
+  {
+    text: "We made it the foundation.",
+    hold: 2500,
+    pauseAfter: 0,
+    italic: false, // upright — the answer
+  },
 ];
 
-const FADE_IN_MS = 1200;
-const HOLD_MS = 2800;
-const FADE_OUT_MS = 1000;
-const CYCLE_MS = FADE_IN_MS + HOLD_MS + FADE_OUT_MS;
+const CHAR_DELAY = 45;
+const FADE_OUT_DURATION = 2000;
 
 interface QuestionSequenceProps {
   onComplete: () => void;
@@ -19,72 +45,95 @@ interface QuestionSequenceProps {
 
 export default function QuestionSequence({ onComplete }: QuestionSequenceProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [phase, setPhase] = useState<"in" | "hold" | "out">("in");
+  const [displayedText, setDisplayedText] = useState("");
+  const [phase, setPhase] = useState<"typing" | "holding" | "fading" | "dark">("typing");
   const [skipped, setSkipped] = useState(false);
+  const charIndexRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSkip = useCallback(() => {
     setSkipped(true);
+    if (timerRef.current) clearTimeout(timerRef.current);
     onComplete();
   }, [onComplete]);
 
   useEffect(() => {
     if (skipped) return;
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    const beat = BEATS[currentIndex];
+    charIndexRef.current = 0;
+    setDisplayedText("");
+    setPhase("typing");
 
-    // Fade in
-    setPhase("in");
+    const typeNextChar = () => {
+      charIndexRef.current++;
+      const chars = charIndexRef.current;
+      setDisplayedText(beat.text.slice(0, chars));
 
-    // Hold
-    timers.push(
-      setTimeout(() => setPhase("hold"), FADE_IN_MS)
-    );
+      if (chars < beat.text.length) {
+        timerRef.current = setTimeout(typeNextChar, CHAR_DELAY);
+      } else {
+        // Done typing — hold
+        setPhase("holding");
+        timerRef.current = setTimeout(() => {
+          // Fade out
+          setPhase("fading");
+          timerRef.current = setTimeout(() => {
+            if (currentIndex < BEATS.length - 1) {
+              // Dark pause before next beat
+              setPhase("dark");
+              setDisplayedText("");
+              timerRef.current = setTimeout(() => {
+                setCurrentIndex((i) => i + 1);
+              }, beat.pauseAfter);
+            } else {
+              onComplete();
+            }
+          }, FADE_OUT_DURATION);
+        }, beat.hold);
+      }
+    };
 
-    // Fade out
-    timers.push(
-      setTimeout(() => setPhase("out"), FADE_IN_MS + HOLD_MS)
-    );
+    timerRef.current = setTimeout(typeNextChar, 400);
 
-    // Next question or complete
-    timers.push(
-      setTimeout(() => {
-        if (currentIndex < QUESTIONS.length - 1) {
-          setCurrentIndex((i) => i + 1);
-        } else {
-          onComplete();
-        }
-      }, CYCLE_MS)
-    );
-
-    return () => timers.forEach(clearTimeout);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [currentIndex, skipped, onComplete]);
 
   if (skipped) return null;
 
-  const animationClass =
-    phase === "in"
-      ? "animate-fade-in-up"
-      : phase === "out"
-        ? "animate-fade-out-up"
-        : "";
+  const beat = BEATS[currentIndex];
 
   return (
     <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 10 }}>
-      <p
-        key={currentIndex}
-        className={`font-display italic text-center px-8 ${animationClass}`}
-        style={{
-          fontWeight: 300,
-          fontSize: "clamp(1.5rem, 4vw, 3rem)",
-          letterSpacing: "0.02em",
-          color: "var(--cream)",
-          maxWidth: "800px",
-        }}
-      >
-        {QUESTIONS[currentIndex]}
-      </p>
+      {phase !== "dark" && (
+        <p
+          key={currentIndex}
+          className={`font-body text-center px-8 ${
+            phase === "fading" ? "animate-fade-out-slow" : ""
+          }`}
+          style={{
+            fontWeight: beat.italic ? 300 : 400,
+            fontStyle: "normal",
+            fontSize: "clamp(1.3rem, 3vw, 2.2rem)",
+            letterSpacing: "0.02em",
+            color: "var(--cream)",
+            maxWidth: "700px",
+            lineHeight: 1.7,
+            minHeight: "3em",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <span>
+            {displayedText}
+            {phase === "typing" && <span className="typewriter-cursor" />}
+          </span>
+        </p>
+      )}
 
-      {/* Skip button */}
       <button
         onClick={handleSkip}
         className="fixed font-body cursor-pointer"

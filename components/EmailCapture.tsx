@@ -69,7 +69,7 @@ export default function EmailCapture() {
         Be the first to know
       </p>
 
-      <form onSubmit={handleSubmit} className="flex items-center gap-0">
+      <form onSubmit={handleSubmit} className="flex items-stretch gap-0">
         <input
           type="email"
           value={email}
@@ -81,6 +81,7 @@ export default function EmailCapture() {
           style={{
             width: "clamp(200px, 40vw, 280px)",
             borderRight: "none",
+            height: "auto",
           }}
         />
         <button
@@ -92,8 +93,8 @@ export default function EmailCapture() {
             border: "1px solid rgba(201, 168, 76, 0.3)",
             borderLeft: "none",
             color: "var(--gold)",
-            padding: "0.75rem 1rem",
-            fontSize: "1.1rem",
+            padding: "0 1rem",
+            fontSize: "0.9rem",
             lineHeight: 1,
             transition: "all 0.3s ease",
             display: "flex",

@@ -22,7 +22,7 @@ const ROLES = [
   "Other",
 ];
 
-interface FormData {
+interface FormFields {
   name: string;
   email: string;
   phone: string;
@@ -36,10 +36,101 @@ interface FormData {
   whyLegacy: string;
 }
 
-type FormErrors = Partial<Record<keyof FormData | "resume", string>>;
+type FormErrors = Partial<Record<keyof FormFields | "resume", string>>;
 
+/* ── Reusable field wrapper ────────────────────── */
+function Field({
+  label,
+  required,
+  error,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  error?: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div data-error={error ? "" : undefined}>
+      <label
+        htmlFor={htmlFor}
+        className="font-body"
+        style={{
+          fontSize: "0.78rem",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase" as const,
+          fontWeight: 300,
+          color: "var(--white-soft)",
+          marginBottom: "0.65rem",
+          display: "block",
+        }}
+      >
+        {label}
+        {required && <span style={{ color: "var(--gold)", marginLeft: "4px" }}>*</span>}
+      </label>
+      {children}
+      {error && (
+        <p
+          className="font-body"
+          style={{ fontSize: "0.8rem", color: "var(--error)", marginTop: "0.45rem" }}
+        >
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── Section wrapper ───────────────────────────── */
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="form-section" style={{ marginBottom: "3rem" }}>
+      <h3
+        className="font-display"
+        style={{
+          fontSize: "0.7rem",
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          fontWeight: 500,
+          color: "var(--gold)",
+          marginBottom: description ? "0.5rem" : "1.75rem",
+        }}
+      >
+        {title}
+      </h3>
+      {description && (
+        <p
+          className="font-body"
+          style={{
+            fontSize: "0.82rem",
+            color: "var(--white-muted)",
+            marginBottom: "1.75rem",
+            lineHeight: 1.6,
+          }}
+        >
+          {description}
+        </p>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.6rem" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ── Main Form ─────────────────────────────────── */
 export default function ApplicationForm() {
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState<FormFields>({
     name: "",
     email: "",
     phone: "",
@@ -57,12 +148,23 @@ export default function ApplicationForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
-  const updateField = (field: keyof FormData, value: string) => {
+  const updateField = (field: keyof FormFields, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
         delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const handleFileSelect = (file: File | null) => {
+    setResume(file);
+    if (file && errors.resume) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.resume;
         return next;
       });
     }
@@ -89,7 +191,6 @@ export default function ApplicationForm() {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
-      // Scroll to first error
       const firstErr = document.querySelector("[data-error]");
       firstErr?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
@@ -98,7 +199,7 @@ export default function ApplicationForm() {
     setStatus("submitting");
 
     try {
-      const formData = new FormData();
+      const formData = new window.FormData();
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, value);
       });
@@ -120,14 +221,15 @@ export default function ApplicationForm() {
     }
   };
 
+  /* ── Success State ── */
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-6 animate-fade-in">
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
         <h2
           className="font-display"
           style={{
-            fontSize: "clamp(2rem, 5vw, 3.5rem)",
-            fontWeight: 300,
+            fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
+            fontWeight: 400,
             color: "var(--cream)",
             letterSpacing: "0.08em",
           }}
@@ -135,13 +237,13 @@ export default function ApplicationForm() {
           Thank you.
         </h2>
         <p
-          className="font-body mt-6"
+          className="font-body mt-8"
           style={{
-            fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
+            fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
             color: "var(--white-soft)",
             fontWeight: 300,
-            lineHeight: 1.8,
-            maxWidth: "440px",
+            lineHeight: 1.9,
+            maxWidth: "400px",
           }}
         >
           Your application has been received. If there&apos;s a fit,
@@ -149,7 +251,7 @@ export default function ApplicationForm() {
         </p>
         <a
           href="/"
-          className="font-body mt-10 inline-block"
+          className="font-body mt-14 inline-block"
           style={{
             fontSize: "0.85rem",
             color: "var(--gold)",
@@ -166,261 +268,193 @@ export default function ApplicationForm() {
     );
   }
 
-  const labelStyle = {
-    fontSize: "0.75rem",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase" as const,
-    fontWeight: 300,
-    color: "var(--white-soft)",
-    marginBottom: "0.5rem",
-    display: "block",
-  };
-
+  /* ── Form ── */
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-[560px] mx-auto space-y-8">
-      {/* Full Name */}
-      <div data-error={errors.name ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Full Name <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <input
-          type="text"
-          value={form.name}
-          onChange={(e) => updateField("name", e.target.value)}
-          className={`input-gold ${errors.name ? "error" : ""}`}
-        />
-        {errors.name && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.name}
-          </p>
-        )}
-      </div>
+    <form onSubmit={handleSubmit}>
 
-      {/* Email */}
-      <div data-error={errors.email ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Email Address <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <input
-          type="email"
-          value={form.email}
-          onChange={(e) => updateField("email", e.target.value)}
-          className={`input-gold ${errors.email ? "error" : ""}`}
-        />
-        {errors.email && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.email}
-          </p>
-        )}
-      </div>
-
-      {/* Phone */}
-      <div>
-        <label className="font-body" style={labelStyle}>
-          Phone Number
-        </label>
-        <input
-          type="tel"
-          value={form.phone}
-          onChange={(e) => updateField("phone", e.target.value)}
-          className="input-gold"
-        />
-      </div>
-
-      {/* Location */}
-      <div data-error={errors.location ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Location <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <input
-          type="text"
-          value={form.location}
-          onChange={(e) => updateField("location", e.target.value)}
-          placeholder="City, State/Country"
-          className={`input-gold ${errors.location ? "error" : ""}`}
-        />
-        {errors.location && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.location}
-          </p>
-        )}
-      </div>
-
-      {/* Relocation */}
-      <div data-error={errors.relocation ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Open to Relocation? <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <select
-          value={form.relocation}
-          onChange={(e) => updateField("relocation", e.target.value)}
-          className={`select-gold ${errors.relocation ? "error" : ""}`}
-        >
-          <option value="" disabled>Select an option</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-          <option value="Depends on the opportunity">Depends on the opportunity</option>
-        </select>
-        {errors.relocation && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.relocation}
-          </p>
-        )}
-      </div>
-
-      {/* Role Interest */}
-      <div data-error={errors.role ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Role Interest <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <select
-          value={form.role}
-          onChange={(e) => updateField("role", e.target.value)}
-          className={`select-gold ${errors.role ? "error" : ""}`}
-        >
-          <option value="" disabled>Select a role</option>
-          {ROLES.map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
-        {errors.role && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.role}
-          </p>
-        )}
-      </div>
-
-      {/* Other role */}
-      {form.role === "Other" && (
-        <div data-error={errors.roleOther ? "" : undefined}>
-          <label className="font-body" style={labelStyle}>
-            Please specify <span style={{ color: "var(--gold)" }}>*</span>
-          </label>
+      {/* ── About You ── */}
+      <Section title="About You" description="Basic contact information so we can reach you.">
+        <Field label="Full Name" required htmlFor="f-name" error={errors.name}>
           <input
+            id="f-name"
             type="text"
-            value={form.roleOther}
-            onChange={(e) => updateField("roleOther", e.target.value)}
-            className={`input-gold ${errors.roleOther ? "error" : ""}`}
+            value={form.name}
+            onChange={(e) => updateField("name", e.target.value)}
+            className={`input-gold input-lg ${errors.name ? "error" : ""}`}
           />
-          {errors.roleOther && (
-            <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-              {errors.roleOther}
-            </p>
-          )}
+        </Field>
+
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "1.6rem" }}>
+          <Field label="Email Address" required htmlFor="f-email" error={errors.email}>
+            <input
+              id="f-email"
+              type="email"
+              value={form.email}
+              onChange={(e) => updateField("email", e.target.value)}
+              className={`input-gold input-lg ${errors.email ? "error" : ""}`}
+            />
+          </Field>
+
+          <Field label="Phone Number" htmlFor="f-phone">
+            <input
+              id="f-phone"
+              type="tel"
+              value={form.phone}
+              onChange={(e) => updateField("phone", e.target.value)}
+              className="input-gold input-lg"
+            />
+          </Field>
         </div>
-      )}
 
-      {/* LinkedIn */}
-      <div>
-        <label className="font-body" style={labelStyle}>
-          LinkedIn Profile
-        </label>
-        <input
-          type="url"
-          value={form.linkedin}
-          onChange={(e) => updateField("linkedin", e.target.value)}
-          placeholder="https://linkedin.com/in/..."
-          className="input-gold"
-        />
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "1.6rem" }}>
+          <Field label="Location" required htmlFor="f-location" error={errors.location}>
+            <input
+              id="f-location"
+              type="text"
+              value={form.location}
+              onChange={(e) => updateField("location", e.target.value)}
+              placeholder="City, State/Country"
+              className={`input-gold input-lg ${errors.location ? "error" : ""}`}
+            />
+          </Field>
 
-      {/* Portfolio / GitHub */}
-      <div>
-        <label className="font-body" style={labelStyle}>
-          Portfolio / GitHub
-        </label>
-        <input
-          type="url"
-          value={form.portfolio}
-          onChange={(e) => updateField("portfolio", e.target.value)}
-          placeholder="https://github.com/... or portfolio URL"
-          className="input-gold"
-        />
-      </div>
+          <Field label="Open to Relocation?" required htmlFor="f-relocation" error={errors.relocation}>
+            <select
+              id="f-relocation"
+              value={form.relocation}
+              onChange={(e) => updateField("relocation", e.target.value)}
+              className={`select-gold input-lg ${errors.relocation ? "error" : ""}`}
+            >
+              <option value="" disabled>Select an option</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="Depends on the opportunity">Depends on the opportunity</option>
+            </select>
+          </Field>
+        </div>
+      </Section>
 
-      {/* Resume Upload */}
-      <div data-error={errors.resume ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Resume / CV <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <FileUpload
-          onFileSelect={setResume}
-          error={errors.resume}
-        />
-      </div>
+      {/* ── Role & Profile ── */}
+      <Section title="Role & Profile" description="Tell us where you see yourself contributing.">
+        <Field label="Role Interest" required htmlFor="f-role" error={errors.role}>
+          <select
+            id="f-role"
+            value={form.role}
+            onChange={(e) => updateField("role", e.target.value)}
+            className={`select-gold input-lg ${errors.role ? "error" : ""}`}
+          >
+            <option value="" disabled>Select a role</option>
+            {ROLES.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </Field>
 
-      {/* Experience */}
-      <div data-error={errors.experience ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Relevant Experience & Skills <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <textarea
-          value={form.experience}
-          onChange={(e) => updateField("experience", e.target.value)}
-          placeholder="Tell us about your background, expertise, and what you've built."
-          rows={3}
-          className={`textarea-gold ${errors.experience ? "error" : ""}`}
-          style={{ minHeight: "120px" }}
-        />
-        {errors.experience && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.experience}
-          </p>
+        {form.role === "Other" && (
+          <Field label="Please Specify" required htmlFor="f-roleOther" error={errors.roleOther}>
+            <input
+              id="f-roleOther"
+              type="text"
+              value={form.roleOther}
+              onChange={(e) => updateField("roleOther", e.target.value)}
+              className={`input-gold input-lg ${errors.roleOther ? "error" : ""}`}
+            />
+          </Field>
         )}
-      </div>
 
-      {/* Why Legacy AI */}
-      <div data-error={errors.whyLegacy ? "" : undefined}>
-        <label className="font-body" style={labelStyle}>
-          Why Legacy AI? <span style={{ color: "var(--gold)" }}>*</span>
-        </label>
-        <textarea
-          value={form.whyLegacy}
-          onChange={(e) => updateField("whyLegacy", e.target.value)}
-          placeholder="What draws you to this opportunity? What excites you about shaping the future of AI?"
-          rows={3}
-          className={`textarea-gold ${errors.whyLegacy ? "error" : ""}`}
-          style={{ minHeight: "120px" }}
-        />
-        {errors.whyLegacy && (
-          <p className="font-body mt-1" style={{ fontSize: "0.8rem", color: "var(--error)" }}>
-            {errors.whyLegacy}
-          </p>
-        )}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "1.6rem" }}>
+          <Field label="LinkedIn Profile" htmlFor="f-linkedin">
+            <input
+              id="f-linkedin"
+              type="url"
+              value={form.linkedin}
+              onChange={(e) => updateField("linkedin", e.target.value)}
+              placeholder="https://linkedin.com/in/..."
+              className="input-gold input-lg"
+            />
+          </Field>
 
-      {/* Submit */}
-      <div className="pt-4">
+          <Field label="Portfolio / GitHub" htmlFor="f-portfolio">
+            <input
+              id="f-portfolio"
+              type="url"
+              value={form.portfolio}
+              onChange={(e) => updateField("portfolio", e.target.value)}
+              placeholder="https://github.com/..."
+              className="input-gold input-lg"
+            />
+          </Field>
+        </div>
+      </Section>
+
+      {/* ── Your Story ── */}
+      <Section title="Your Story" description="Show us what you've done and why this matters to you.">
+        <Field label="Resume / CV" required error={errors.resume}>
+          <FileUpload
+            onFileSelect={handleFileSelect}
+            error={errors.resume}
+          />
+        </Field>
+
+        <Field label="Relevant Experience & Skills" required htmlFor="f-experience" error={errors.experience}>
+          <textarea
+            id="f-experience"
+            value={form.experience}
+            onChange={(e) => updateField("experience", e.target.value)}
+            placeholder="Tell us about your background, expertise, and what you've built."
+            rows={5}
+            className={`textarea-gold textarea-lg ${errors.experience ? "error" : ""}`}
+            style={{ minHeight: "150px" }}
+          />
+        </Field>
+
+        <Field label="Why Legacy AI?" required htmlFor="f-whyLegacy" error={errors.whyLegacy}>
+          <textarea
+            id="f-whyLegacy"
+            value={form.whyLegacy}
+            onChange={(e) => updateField("whyLegacy", e.target.value)}
+            placeholder="What draws you to this opportunity? What excites you about shaping the future of AI?"
+            rows={5}
+            className={`textarea-gold textarea-lg ${errors.whyLegacy ? "error" : ""}`}
+            style={{ minHeight: "150px" }}
+          />
+        </Field>
+      </Section>
+
+      {/* ── Submit ── */}
+      <div style={{ marginTop: "2.5rem" }}>
         <button
           type="submit"
           disabled={status === "submitting"}
           className="font-body w-full cursor-pointer"
           style={{
-            fontSize: "0.9rem",
-            letterSpacing: "0.15em",
+            fontSize: "0.85rem",
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
-            fontWeight: 400,
+            fontWeight: 500,
             backgroundColor: "var(--gold)",
             color: "var(--deep-navy)",
             border: "none",
-            padding: "1rem 2rem",
+            padding: "1.15rem 2rem",
             transition: "all 0.3s ease",
             opacity: status === "submitting" ? 0.7 : 1,
           }}
           onMouseEnter={(e) => {
             if (status !== "submitting") {
               e.currentTarget.style.backgroundColor = "#d4b55a";
+              e.currentTarget.style.boxShadow = "0 0 30px rgba(201, 168, 76, 0.2)";
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = "var(--gold)";
+            e.currentTarget.style.boxShadow = "none";
           }}
         >
           {status === "submitting" ? "Submitting..." : "Submit Application"}
         </button>
 
         <p
-          className="font-body text-center mt-4"
+          className="font-body text-center mt-5"
           style={{
             fontSize: "0.75rem",
             color: "var(--white-muted)",
@@ -432,8 +466,8 @@ export default function ApplicationForm() {
 
         {status === "error" && (
           <p
-            className="font-body text-center mt-4 animate-fade-in"
-            style={{ fontSize: "0.8rem", color: "var(--error)" }}
+            className="font-body text-center mt-5 animate-fade-in"
+            style={{ fontSize: "0.8rem", color: "var(--error)", lineHeight: 1.7 }}
           >
             Something went wrong. Please try again or email us directly at{" "}
             <a
