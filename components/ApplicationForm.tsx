@@ -58,12 +58,12 @@ function Field({
         htmlFor={htmlFor}
         className="font-body"
         style={{
-          fontSize: "0.78rem",
-          letterSpacing: "0.12em",
+          fontSize: "0.75rem",
+          letterSpacing: "0.08em",
           textTransform: "uppercase" as const,
-          fontWeight: 300,
+          fontWeight: 400,
           color: "var(--white-soft)",
-          marginBottom: "0.65rem",
+          marginBottom: "0.5rem",
           display: "block",
         }}
       >
@@ -94,16 +94,16 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="form-section" style={{ marginBottom: "3rem" }}>
+    <div className="form-section" style={{ marginBottom: "2.5rem" }}>
       <h3
         className="font-display"
         style={{
-          fontSize: "0.7rem",
-          letterSpacing: "0.3em",
+          fontSize: "0.72rem",
+          letterSpacing: "0.2em",
           textTransform: "uppercase",
-          fontWeight: 500,
+          fontWeight: 400,
           color: "var(--gold)",
-          marginBottom: description ? "0.5rem" : "1.75rem",
+          marginBottom: description ? "0.4rem" : "1.5rem",
         }}
       >
         {title}
@@ -112,16 +112,16 @@ function Section({
         <p
           className="font-body"
           style={{
-            fontSize: "0.82rem",
+            fontSize: "0.78rem",
             color: "var(--white-muted)",
-            marginBottom: "1.75rem",
+            marginBottom: "1.5rem",
             lineHeight: 1.6,
           }}
         >
           {description}
         </p>
       )}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.6rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
         {children}
       </div>
     </div>
@@ -129,7 +129,11 @@ function Section({
 }
 
 /* ── Main Form ─────────────────────────────────── */
-export default function ApplicationForm() {
+interface ApplicationFormProps {
+  onSuccess: () => void;
+}
+
+export default function ApplicationForm({ onSuccess }: ApplicationFormProps) {
   const [form, setForm] = useState<FormFields>({
     name: "",
     email: "",
@@ -214,59 +218,11 @@ export default function ApplicationForm() {
 
       if (!res.ok) throw new Error("Submission failed");
 
-      setStatus("success");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      onSuccess();
     } catch {
       setStatus("error");
     }
   };
-
-  /* ── Success State ── */
-  if (status === "success") {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-        <h2
-          className="font-display"
-          style={{
-            fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
-            fontWeight: 400,
-            color: "var(--cream)",
-            letterSpacing: "0.08em",
-          }}
-        >
-          Thank you.
-        </h2>
-        <p
-          className="font-body mt-8"
-          style={{
-            fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
-            color: "var(--white-soft)",
-            fontWeight: 300,
-            lineHeight: 1.9,
-            maxWidth: "400px",
-          }}
-        >
-          Your application has been received. If there&apos;s a fit,
-          we&apos;ll be in touch soon.
-        </p>
-        <a
-          href="/"
-          className="font-body mt-14 inline-block"
-          style={{
-            fontSize: "0.85rem",
-            color: "var(--gold)",
-            textDecoration: "none",
-            letterSpacing: "0.05em",
-            transition: "opacity 0.3s ease",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-        >
-          &larr; Back to legacyaitechnologies.com
-        </a>
-      </div>
-    );
-  }
 
   /* ── Form ── */
   return (
@@ -422,20 +378,20 @@ export default function ApplicationForm() {
       </Section>
 
       {/* ── Submit ── */}
-      <div style={{ marginTop: "2.5rem" }}>
+      <div style={{ marginTop: "2rem" }}>
         <button
           type="submit"
           disabled={status === "submitting"}
           className="font-body w-full cursor-pointer"
           style={{
-            fontSize: "0.85rem",
-            letterSpacing: "0.18em",
+            fontSize: "0.82rem",
+            letterSpacing: "0.12em",
             textTransform: "uppercase",
-            fontWeight: 500,
+            fontWeight: 400,
             backgroundColor: "var(--gold)",
             color: "var(--deep-navy)",
             border: "none",
-            padding: "1.15rem 2rem",
+            padding: "1rem 2rem",
             transition: "all 0.3s ease",
             opacity: status === "submitting" ? 0.7 : 1,
           }}
@@ -454,9 +410,9 @@ export default function ApplicationForm() {
         </button>
 
         <p
-          className="font-body text-center mt-5"
+          className="font-body text-center mt-4"
           style={{
-            fontSize: "0.75rem",
+            fontSize: "0.7rem",
             color: "var(--white-muted)",
             letterSpacing: "0.04em",
           }}
@@ -466,8 +422,8 @@ export default function ApplicationForm() {
 
         {status === "error" && (
           <p
-            className="font-body text-center mt-5 animate-fade-in"
-            style={{ fontSize: "0.8rem", color: "var(--error)", lineHeight: 1.7 }}
+            className="font-body text-center mt-4 animate-fade-in"
+            style={{ fontSize: "0.78rem", color: "var(--error)", lineHeight: 1.7 }}
           >
             Something went wrong. Please try again or email us directly at{" "}
             <a

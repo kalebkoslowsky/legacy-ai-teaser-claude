@@ -31,7 +31,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Outfit:wght@200;300;400&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
           rel="stylesheet"
         />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -41,7 +41,7 @@ export default function RootLayout({
           <div className="fallback-brand">
             <h1
               style={{
-                fontFamily: "Orbitron, sans-serif",
+                fontFamily: "Share Tech Mono, monospace",
                 fontSize: "3rem",
                 letterSpacing: "0.15em",
                 textTransform: "uppercase",
@@ -53,7 +53,7 @@ export default function RootLayout({
             </h1>
             <p
               style={{
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "Share Tech Mono, monospace",
                 fontSize: "0.9rem",
                 color: "rgba(255,255,255,0.85)",
                 marginTop: "1.5rem",

@@ -12,32 +12,32 @@ interface Beat {
 const BEATS: Beat[] = [
   {
     text: "What if the most powerful technology in history was built with the wrong priorities?",
-    hold: 3000,
-    pauseAfter: 800,
+    hold: 2000,
+    pauseAfter: 500,
     italic: false,
   },
   {
     text: "What if intelligence was built to serve — not survive?",
-    hold: 3000,
-    pauseAfter: 800,
+    hold: 2000,
+    pauseAfter: 500,
     italic: false,
   },
   {
     text: "Safety shouldn't be an afterthought.",
-    hold: 2500,
-    pauseAfter: 1000, // longer dark pause before the answer
+    hold: 1500,
+    pauseAfter: 700, // longer dark pause before the answer
     italic: false,
   },
   {
     text: "We made it the foundation.",
-    hold: 2500,
+    hold: 1800,
     pauseAfter: 0,
     italic: false, // upright — the answer
   },
 ];
 
 const CHAR_DELAY = 45;
-const FADE_OUT_DURATION = 2000;
+const FADE_OUT_DURATION = 1400;
 
 interface QuestionSequenceProps {
   onComplete: () => void;

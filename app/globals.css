@@ -29,8 +29,8 @@ html {
 body {
   background-color: var(--deep-navy);
   color: var(--cream);
-  font-family: "Outfit", sans-serif;
-  font-weight: 300;
+  font-family: "Share Tech Mono", monospace;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -51,11 +51,11 @@ body::after {
 
 /* ── Typography Classes ────────────────────────── */
 .font-display {
-  font-family: "Orbitron", sans-serif;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .font-body {
-  font-family: "Outfit", sans-serif;
+  font-family: "Share Tech Mono", monospace;
 }
 
 /* ── Animation Keyframes ───────────────────────── */
@@ -177,7 +177,7 @@ body::after {
 }
 
 .animate-fade-out-slow {
-  animation: fadeOutSlow 2s ease forwards;
+  animation: fadeOutSlow 1.4s ease forwards;
 }
 
 /* ── Gold Divider ──────────────────────────────── */
@@ -201,7 +201,7 @@ body::after {
   background: transparent;
   border: 1px solid rgba(201, 168, 76, 0.3);
   color: var(--cream);
-  font-family: "Outfit", sans-serif;
+  font-family: "Share Tech Mono", monospace;
   font-weight: 300;
   font-size: 0.9rem;
   letter-spacing: 0.04em;
@@ -229,7 +229,7 @@ body::after {
   background: var(--deep-navy);
   border: 1px solid rgba(201, 168, 76, 0.3);
   color: var(--cream);
-  font-family: "Outfit", sans-serif;
+  font-family: "Share Tech Mono", monospace;
   font-weight: 300;
   font-size: 0.9rem;
   letter-spacing: 0.04em;
@@ -263,7 +263,7 @@ body::after {
   background: transparent;
   border: 1px solid rgba(201, 168, 76, 0.3);
   color: var(--cream);
-  font-family: "Outfit", sans-serif;
+  font-family: "Share Tech Mono", monospace;
   font-weight: 300;
   font-size: 0.9rem;
   letter-spacing: 0.04em;

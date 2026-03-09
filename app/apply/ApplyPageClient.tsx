@@ -1,22 +1,29 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import ParticleBackground from "@/components/ParticleBackground";
 import AmbientGlow from "@/components/AmbientGlow";
 import ApplicationForm from "@/components/ApplicationForm";
 
 export default function ApplyPageClient() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSuccess = useCallback(() => {
+    setSubmitted(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <main className="relative min-h-screen flex flex-col items-center">
       <AmbientGlow />
       <ParticleBackground />
 
-      {/* Full-width centered column */}
       <div
         className="relative w-full flex flex-col items-center"
         style={{ zIndex: 10 }}
       >
         {/* Top bar with back link */}
-        <div className="w-full max-w-[1000px] px-6 sm:px-10 pt-10 sm:pt-14">
+        <div className="w-full max-w-[760px] px-6 sm:px-10 pt-8 sm:pt-10">
           <a
             href="/"
             className="font-body inline-block"
@@ -38,93 +45,134 @@ export default function ApplyPageClient() {
           </a>
         </div>
 
-        {/* Header — full width centered */}
-        <header className="text-center px-6 mt-14 sm:mt-20 mb-16 sm:mb-20">
-          <h1
-            className="font-display"
-            style={{
-              fontSize: "clamp(0.65rem, 1.8vw, 1.1rem)",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              fontWeight: 600,
-            }}
-          >
-            <span style={{ color: "var(--cream)" }}>LEGACY </span>
-            <span style={{ color: "var(--gold)" }}>AI</span>
-            <span style={{ color: "var(--cream)" }}> TECHNOLOGIES</span>
-          </h1>
-
+        {submitted ? (
+          /* ── Success View ── */
           <div
-            className="gold-divider animate mx-auto mt-8 sm:mt-10"
-            style={{ maxWidth: "80px" }}
-          />
-
-          <h2
-            className="font-display mt-8 sm:mt-10"
-            style={{
-              fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
-              letterSpacing: "0.06em",
-              fontWeight: 400,
-              color: "var(--cream)",
-            }}
+            className="flex-1 flex flex-col items-center justify-center text-center px-6 animate-fade-in"
+            style={{ minHeight: "60vh" }}
           >
-            Join the Team
-          </h2>
+            <h1
+              className="font-display"
+              style={{
+                fontSize: "clamp(1.2rem, 3vw, 1.8rem)",
+                letterSpacing: "0.1em",
+                fontWeight: 400,
+                color: "var(--cream)",
+              }}
+            >
+              Application Received
+            </h1>
 
-          <p
-            className="font-body mt-6 sm:mt-8 mx-auto"
-            style={{
-              fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
-              lineHeight: 1.9,
-              fontWeight: 300,
-              color: "var(--white-soft)",
-              maxWidth: "540px",
-            }}
-          >
-            We&apos;re building something that will change the way the world
-            thinks about artificial intelligence. We need exceptional people who
-            are ready to do the most important work of their careers.
-          </p>
+            <div
+              className="gold-divider animate mx-auto"
+              style={{ maxWidth: "60px", marginTop: "1.5rem" }}
+            />
 
-          <p
-            className="font-body mt-6 mx-auto"
-            style={{
-              fontSize: "clamp(0.85rem, 1.3vw, 0.95rem)",
-              lineHeight: 1.9,
-              fontWeight: 300,
-              color: "var(--white-muted)",
-              maxWidth: "500px",
-            }}
-          >
-            We&apos;re looking for world-class talent across AI research,
-            engineering, infrastructure, and operations. Whether you&apos;re a
-            researcher pushing the boundaries of machine learning or an engineer
-            who builds things that scale — there may be a place for you here.
-          </p>
-        </header>
+            <p
+              className="font-body"
+              style={{
+                fontSize: "0.85rem",
+                color: "var(--white-soft)",
+                marginTop: "1.5rem",
+                lineHeight: 1.8,
+                maxWidth: "380px",
+              }}
+            >
+              Thank you for your interest. If there&apos;s a fit,
+              we&apos;ll be in touch.
+            </p>
 
-        {/* Form card */}
-        <div
-          className="form-card w-full max-w-[760px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16"
-          style={{ marginBottom: "4rem" }}
-        >
-          <ApplicationForm />
-        </div>
+            <a
+              href="/"
+              className="font-body"
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--gold)",
+                textDecoration: "none",
+                letterSpacing: "0.08em",
+                marginTop: "2.5rem",
+                transition: "opacity 0.3s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            >
+              &larr; Back to legacyaitechnologies.com
+            </a>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <header className="text-center px-6 mt-10 sm:mt-14 mb-10 sm:mb-12">
+              <h1
+                className="font-display"
+                style={{
+                  fontSize: "clamp(0.6rem, 1.6vw, 0.9rem)",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                <span style={{ color: "var(--cream)" }}>LEGACY </span>
+                <span style={{ color: "var(--gold)" }}>AI</span>
+                <span style={{ color: "var(--cream)" }}> TECHNOLOGIES</span>
+              </h1>
 
-        {/* Footer */}
-        <footer className="text-center py-12">
-          <p
-            className="font-body"
-            style={{
-              fontSize: "0.7rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "var(--white-muted)",
-            }}
-          >
-            &copy; 2026 Legacy AI Technologies
-          </p>
-        </footer>
+              <div
+                className="gold-divider animate mx-auto mt-6"
+                style={{ maxWidth: "60px" }}
+              />
+
+              <h2
+                className="font-display mt-6"
+                style={{
+                  fontSize: "clamp(1.1rem, 3vw, 1.6rem)",
+                  letterSpacing: "0.08em",
+                  fontWeight: 400,
+                  color: "var(--cream)",
+                }}
+              >
+                Join the Team
+              </h2>
+
+              <p
+                className="font-body mt-4 mx-auto"
+                style={{
+                  fontSize: "0.85rem",
+                  lineHeight: 1.8,
+                  color: "var(--white-muted)",
+                  maxWidth: "480px",
+                }}
+              >
+                We&apos;re looking for exceptional people across AI research,
+                engineering, and operations to help build the future of
+                trusted intelligence.
+              </p>
+            </header>
+
+            {/* Form card */}
+            <div
+              className="form-card w-full max-w-[720px] mx-auto px-6 sm:px-10 lg:px-14 py-10 sm:py-12"
+              style={{ marginBottom: "3rem" }}
+            >
+              <ApplicationForm onSuccess={handleSuccess} />
+            </div>
+
+            {/* Footer */}
+            <footer className="text-center py-8">
+              <p
+                className="font-body"
+                style={{
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "var(--white-muted)",
+                }}
+              >
+                &copy; 2026 Legacy AI Technologies
+              </p>
+            </footer>
+          </>
+        )}
       </div>
     </main>
   );
