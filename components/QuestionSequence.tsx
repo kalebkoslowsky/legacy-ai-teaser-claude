@@ -4,39 +4,39 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 interface Beat {
   text: string;
-  hold: number;      // ms to hold after typing
+  hold: number;       // ms to hold after typing
   pauseAfter: number; // ms of dark pause before next beat
-  italic: boolean;
+  vanish: boolean;    // true = instant disappear, false = slow fade
 }
 
 const BEATS: Beat[] = [
   {
-    text: "What if the most powerful technology in history was built with the wrong priorities?",
-    hold: 2000,
-    pauseAfter: 500,
-    italic: false,
+    text: "What if the most powerful technology in history... was built with the wrong priorities.",
+    hold: 2500,
+    pauseAfter: 600,
+    vanish: false,
   },
   {
     text: "What if intelligence was built to serve — not survive?",
-    hold: 2000,
-    pauseAfter: 500,
-    italic: false,
+    hold: 2500,
+    pauseAfter: 600,
+    vanish: false,
   },
   {
-    text: "Safety shouldn't be an afterthought.",
-    hold: 1500,
-    pauseAfter: 700, // longer dark pause before the answer
-    italic: false,
+    text: "Safety shouldn't be an afterthought...",
+    hold: 2000,
+    pauseAfter: 800,
+    vanish: false,
   },
   {
     text: "We made it the foundation.",
-    hold: 1800,
+    hold: 2200,
     pauseAfter: 0,
-    italic: false, // upright — the answer
+    vanish: false,
   },
 ];
 
-const CHAR_DELAY = 45;
+const CHAR_DELAY = 55;
 const FADE_OUT_DURATION = 1400;
 
 interface QuestionSequenceProps {
@@ -76,11 +76,8 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
         // Done typing — hold
         setPhase("holding");
         timerRef.current = setTimeout(() => {
-          // Fade out
-          setPhase("fading");
-          timerRef.current = setTimeout(() => {
+          const advance = () => {
             if (currentIndex < BEATS.length - 1) {
-              // Dark pause before next beat
               setPhase("dark");
               setDisplayedText("");
               timerRef.current = setTimeout(() => {
@@ -89,7 +86,16 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
             } else {
               onComplete();
             }
-          }, FADE_OUT_DURATION);
+          };
+
+          if (beat.vanish) {
+            // Instant vanish — skip fade
+            advance();
+          } else {
+            // Slow fade out
+            setPhase("fading");
+            timerRef.current = setTimeout(advance, FADE_OUT_DURATION);
+          }
         }, beat.hold);
       }
     };
@@ -114,7 +120,7 @@ export default function QuestionSequence({ onComplete }: QuestionSequenceProps) 
             phase === "fading" ? "animate-fade-out-slow" : ""
           }`}
           style={{
-            fontWeight: beat.italic ? 300 : 400,
+            fontWeight: 400,
             fontStyle: "normal",
             fontSize: "clamp(1.3rem, 3vw, 2.2rem)",
             letterSpacing: "0.02em",
