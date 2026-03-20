@@ -11,7 +11,7 @@ interface Beat {
 
 const BEATS: Beat[] = [
   {
-    text: "What if the most powerful technology in history... was built with the wrong priorities.",
+    text: "What if the most powerful technology in history — was built with the wrong priorities?",
     hold: 2500,
     pauseAfter: 600,
     vanish: false,

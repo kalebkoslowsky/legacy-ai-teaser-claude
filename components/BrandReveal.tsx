@@ -10,15 +10,21 @@ const PAUSE_BEFORE_TAGLINE = 700;
 
 interface BrandRevealProps {
   onRevealComplete: () => void;
+  instant?: boolean;
 }
 
-export default function BrandReveal({ onRevealComplete }: BrandRevealProps) {
-  const [brandText, setBrandText] = useState("");
-  const [taglineText, setTaglineText] = useState("");
-  const [stage, setStage] = useState<"divider" | "brand" | "tagline" | "done">("divider");
+export default function BrandReveal({ onRevealComplete, instant = false }: BrandRevealProps) {
+  const [brandText, setBrandText] = useState(instant ? BRAND_TEXT : "");
+  const [taglineText, setTaglineText] = useState(instant ? TAGLINE_TEXT : "");
+  const [stage, setStage] = useState<"divider" | "brand" | "tagline" | "done">(instant ? "done" : "divider");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (instant) {
+      onRevealComplete();
+      return;
+    }
+
     let charIndex = 0;
 
     timerRef.current = setTimeout(() => {

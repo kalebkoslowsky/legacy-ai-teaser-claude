@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ParticleBackground from "@/components/ParticleBackground";
 import AmbientGlow from "@/components/AmbientGlow";
 import QuestionSequence from "@/components/QuestionSequence";
@@ -8,10 +8,24 @@ import BrandReveal from "@/components/BrandReveal";
 import EmailCapture from "@/components/EmailCapture";
 import HiringTeaser from "@/components/HiringTeaser";
 
+const VISITED_KEY = "legacy_visited";
+
 export default function Home() {
-  const [phase, setPhase] = useState<"questions" | "reveal" | "complete">(
-    "questions"
+  const [phase, setPhase] = useState<"loading" | "questions" | "reveal" | "complete">(
+    "loading"
   );
+  const [isReturning, setIsReturning] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(VISITED_KEY)) {
+        setIsReturning(true);
+        setPhase("complete");
+        return;
+      }
+    } catch {}
+    setPhase("questions");
+  }, []);
 
   const handleQuestionsComplete = useCallback(() => {
     setPhase("reveal");
@@ -19,6 +33,7 @@ export default function Home() {
 
   const handleRevealComplete = useCallback(() => {
     setPhase("complete");
+    try { localStorage.setItem(VISITED_KEY, "true"); } catch {}
   }, []);
 
   return (
@@ -32,17 +47,17 @@ export default function Home() {
       )}
 
       {/* Main reveal content */}
-      {phase !== "questions" && (
+      {(phase === "reveal" || phase === "complete") && (
         <div
           className="relative flex-1 flex flex-col items-center justify-center px-6 py-20"
           style={{ zIndex: 10 }}
         >
           <div className="flex flex-col items-center gap-12">
-            <BrandReveal onRevealComplete={handleRevealComplete} />
+            <BrandReveal onRevealComplete={handleRevealComplete} instant={isReturning} />
 
             {/* Everything after tagline loads at once */}
             {phase === "complete" && (
-              <div className="flex flex-col items-center gap-12 animate-fade-in">
+              <div className={`flex flex-col items-center gap-12${isReturning ? "" : " animate-fade-in"}`}>
                 <EmailCapture />
 
                 <div className="mt-16">
@@ -57,7 +72,7 @@ export default function Home() {
       {/* Footer */}
       {phase === "complete" && (
         <footer
-          className="relative w-full text-center py-8 animate-fade-in"
+          className={`relative w-full text-center py-8${isReturning ? "" : " animate-fade-in"}`}
           style={{ zIndex: 10 }}
         >
           <p
